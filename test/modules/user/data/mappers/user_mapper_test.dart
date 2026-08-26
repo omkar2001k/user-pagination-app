@@ -34,6 +34,18 @@ void main() {
       expect(result.phone, equals('+1 (555) 019-1001'));
     });
 
+    test('toEntity should apply safe fallbacks when model or fields are null', () {
+      const nullModel = UserModel();
+      final result = UserMapper.toEntity(nullModel);
+
+      expect(result.id, equals(0));
+      expect(result.email, equals(''));
+      expect(result.firstName, equals(''));
+      expect(result.lastName, equals(''));
+      expect(result.avatar, equals(''));
+      expect(result.phone, equals('+1 (555) 019-1000'));
+    });
+
     test('toModel should map UserEntity to UserModel accurately', () {
       final result = UserMapper.toModel(tEntity);
       expect(result.id, equals(tModel.id));
@@ -51,11 +63,21 @@ void main() {
       expect(result.first, equals(tEntity));
     });
 
+    test('toEntityList should return empty list on null/empty input', () {
+      expect(UserMapper.toEntityList(null), isEmpty);
+      expect(UserMapper.toEntityList([]), isEmpty);
+    });
+
     test('toModelList should map list of UserEntity to list of UserModel', () {
       final result = UserMapper.toModelList([tEntity]);
       expect(result, isA<List<UserModel>>());
       expect(result.length, equals(1));
       expect(result.first.id, equals(tEntity.id));
+    });
+
+    test('toModelList should return empty list on null/empty input', () {
+      expect(UserMapper.toModelList(null), isEmpty);
+      expect(UserMapper.toModelList([]), isEmpty);
     });
   });
 }

@@ -22,9 +22,9 @@ class CommonAvatarWidget extends StatelessWidget {
 
     Widget avatarContent;
 
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
+    if (imageUrl != null && imageUrl!.trim().isNotEmpty) {
       avatarContent = CachedNetworkImage(
-        imageUrl: imageUrl!,
+        imageUrl: imageUrl!.trim(),
         width: size,
         height: size,
         fit: BoxFit.cover,
@@ -73,14 +73,14 @@ class CommonAvatarWidget extends StatelessWidget {
   }
 
   Widget _buildFallback(BuildContext context) {
-    final theme = Theme.of(context);
+    const fallbackGreen = Color(0xFF10B981);
     return Container(
-      color: theme.primaryColor.withValues(alpha: 0.15),
+      color: fallbackGreen.withValues(alpha: 0.15),
       child: Center(
         child: Text(
           fallbackInitials.toUpperCase(),
           style: TextStyle(
-            color: theme.primaryColor,
+            color: fallbackGreen,
             fontWeight: FontWeight.bold,
             fontSize: radius * 0.75,
           ),

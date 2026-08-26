@@ -3,7 +3,7 @@
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/omkar2001k/user-pagination-app)
 [![Flutter Version](https://img.shields.io/badge/Flutter-^3.0.0-02569B?logo=flutter)](https://flutter.dev)
 [![Dart Version](https://img.shields.io/badge/Dart-^3.0.0-0175C2?logo=dart)](https://dart.dev)
-[![Tests Passing](https://img.shields.io/badge/Tests-77%20Passed-brightgreen?logo=flutter)](https://github.com/omkar2001k/user-pagination-app)
+[![Tests Passing](https://img.shields.io/badge/Tests-80%20Passed-brightgreen?logo=flutter)](https://github.com/omkar2001k/user-pagination-app)
 [![Code Coverage](https://img.shields.io/badge/Coverage-97.0%25-brightgreen)](https://github.com/omkar2001k/user-pagination-app)
 
 A robust, production-ready Flutter application demonstrating **Clean Architecture**, **BLoC (flutter_bloc)** state management, **Hive** offline caching, **GoRouter** declarative navigation, and **GetIt** dependency injection.

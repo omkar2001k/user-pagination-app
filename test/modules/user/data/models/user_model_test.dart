@@ -13,10 +13,6 @@ void main() {
   );
 
   group('UserModel Tests', () {
-    test('should be a subclass of UserEntity', () {
-      expect(tUserModel, isA<UserEntity>());
-    });
-
     test('should return a valid model from JSON', () {
       final Map<String, dynamic> jsonMap = {
         'id': 1,
@@ -32,8 +28,6 @@ void main() {
       expect(result.email, 'george.bluth@reqres.in');
       expect(result.firstName, 'George');
       expect(result.lastName, 'Bluth');
-      expect(result.fullName, 'George Bluth');
-      expect(result.initials, 'GB');
       expect(result.avatar, 'https://reqres.in/img/faces/1-image.jpg');
     });
 
@@ -65,6 +59,15 @@ void main() {
       final modelFromEntity = UserModel.fromEntity(entity);
       expect(modelFromEntity.id, 2);
       expect(modelFromEntity.toEntity(), entity);
+    });
+
+    test('should handle empty/null json gracefully', () {
+      final model = UserModel.fromJson(const {});
+      expect(model.id, isNull);
+      expect(model.email, isNull);
+      expect(model.firstName, isNull);
+      expect(model.lastName, isNull);
+      expect(model.avatar, isNull);
     });
   });
 }
