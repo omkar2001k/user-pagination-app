@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
 
 class CommonEmptyWidget extends StatelessWidget {
   final String title;
@@ -35,7 +36,7 @@ class CommonEmptyWidget extends StatelessWidget {
                 color: theme.primaryColor,
               ),
             ),
-            const SizedBox(height: 20),
+            AppSpacing.v20,
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -43,7 +44,7 @@ class CommonEmptyWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            AppSpacing.v8,
             Text(
               message,
               style: theme.textTheme.bodyMedium,

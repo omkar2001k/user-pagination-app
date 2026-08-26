@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/common_avatar_widget.dart';
-import '../../domain/entities/user_entity.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
+import 'package:user_pagination_app/core/widgets/common_avatar_widget.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
 
 class UserCardWidget extends StatelessWidget {
   final UserEntity user;
@@ -33,7 +34,7 @@ class UserCardWidget extends StatelessWidget {
                 radius: 28,
                 heroTag: 'avatar_${user.id}',
               ),
-              const SizedBox(width: 14),
+              AppSpacing.h14,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +68,7 @@ class UserCardWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    AppSpacing.v4,
                     Text(
                       user.email,
                       style: theme.textTheme.bodyMedium,
@@ -77,7 +78,7 @@ class UserCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.h8,
               Icon(
                 Icons.chevron_right_rounded,
                 color: Colors.grey.shade400,

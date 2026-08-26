@@ -1,4 +1,5 @@
-import '../../domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/data/mappers/user_mapper.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
@@ -11,8 +12,6 @@ class UserModel extends UserEntity {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    // ReqRes API returns id, email, first_name, last_name, avatar.
-    // We synthesize a formatted phone number based on user ID if phone is null.
     final idVal = json['id'] is int ? json['id'] as int : int.parse(json['id'].toString());
     final synthPhone = '+1 (555) 019-${(1000 + idVal).toString()}';
 
@@ -38,24 +37,10 @@ class UserModel extends UserEntity {
   }
 
   factory UserModel.fromEntity(UserEntity entity) {
-    return UserModel(
-      id: entity.id,
-      email: entity.email,
-      firstName: entity.firstName,
-      lastName: entity.lastName,
-      avatar: entity.avatar,
-      phone: entity.phone,
-    );
+    return UserMapper.toModel(entity);
   }
 
   UserEntity toEntity() {
-    return UserEntity(
-      id: id,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      avatar: avatar,
-      phone: phone,
-    );
+    return UserMapper.toEntity(this);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
 
 abstract class UserState extends Equatable {
   const UserState();
@@ -8,15 +8,15 @@ abstract class UserState extends Equatable {
   List<Object?> get props => [];
 }
 
-class UserInitial extends UserState {
-  const UserInitial();
+class UserInitialState extends UserState {
+  const UserInitialState();
 }
 
-class UserLoading extends UserState {
-  const UserLoading();
+class UserLoadingState extends UserState {
+  const UserLoadingState();
 }
 
-class UserLoaded extends UserState {
+class UserLoadedState extends UserState {
   final List<UserEntity> users;
   final List<UserEntity> filteredUsers;
   final int currentPage;
@@ -28,7 +28,7 @@ class UserLoaded extends UserState {
   final bool isOffline;
   final String? errorMessage;
 
-  const UserLoaded({
+  const UserLoadedState({
     required this.users,
     required this.filteredUsers,
     required this.currentPage,
@@ -41,7 +41,7 @@ class UserLoaded extends UserState {
     this.errorMessage,
   });
 
-  UserLoaded copyWith({
+  UserLoadedState copyWith({
     List<UserEntity>? users,
     List<UserEntity>? filteredUsers,
     int? currentPage,
@@ -53,7 +53,7 @@ class UserLoaded extends UserState {
     bool? isOffline,
     String? errorMessage,
   }) {
-    return UserLoaded(
+    return UserLoadedState(
       users: users ?? this.users,
       filteredUsers: filteredUsers ?? this.filteredUsers,
       currentPage: currentPage ?? this.currentPage,
@@ -82,10 +82,10 @@ class UserLoaded extends UserState {
       ];
 }
 
-class UserError extends UserState {
+class UserErrorState extends UserState {
   final String message;
 
-  const UserError(this.message);
+  const UserErrorState(this.message);
 
   @override
   List<Object?> get props => [message];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
 
 class CommonLoadingWidget extends StatelessWidget {
   final int itemCount;
@@ -41,7 +42,7 @@ class CommonLoadingWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  AppSpacing.h16,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +56,7 @@ class CommonLoadingWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        AppSpacing.v8,
                         Container(
                           width: 140,
                           height: 12,

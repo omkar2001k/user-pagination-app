@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../entities/user_entity.dart';
+import 'package:user_pagination_app/core/errors/failures.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
 
 abstract class UserRepository {
   Future<Either<Failure, Tuple2<List<UserEntity>, int>>> getUsers({

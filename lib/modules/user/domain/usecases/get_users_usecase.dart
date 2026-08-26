@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/errors/failures.dart';
-import '../../../../core/utils/usecase.dart';
-import '../entities/user_entity.dart';
-import '../repositories/user_repository.dart';
+import 'package:user_pagination_app/core/errors/failures.dart';
+import 'package:user_pagination_app/core/utils/usecase.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/domain/repositories/user_repository.dart';
 
 class GetUsersParams extends Equatable {
   final int page;

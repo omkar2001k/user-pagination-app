@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:hive/hive.dart';
-import '../../../../core/constants/api_constants.dart';
-import '../../../../core/errors/exceptions.dart';
-import '../models/user_model.dart';
+import 'package:user_pagination_app/core/constants/api_constants.dart';
+import 'package:user_pagination_app/core/errors/exceptions.dart';
+import 'package:user_pagination_app/modules/user/data/models/user_model.dart';
 
 abstract class UserLocalDataSource {
   Future<List<UserModel>> getCachedUsers();

@@ -54,12 +54,12 @@ void main() {
   });
 
   group('UserBloc Tests', () {
-    test('initial state should be UserInitial', () {
-      expect(userBloc.state, const UserInitial());
+    test('initial state should be UserInitialState', () {
+      expect(userBloc.state, const UserInitialState());
     });
 
     blocTest<UserBloc, UserState>(
-      'should emit [UserLoading, UserLoaded] when FetchUsersEvent succeeds',
+      'should emit [UserLoadingState, UserLoadedState] when FetchUsersEvent succeeds',
       build: () {
         when(() => mockGetUsersUseCase(any()))
             .thenAnswer((_) async => const Right(Tuple2([tUser1], 2)));
@@ -67,8 +67,8 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchUsersEvent()),
       expect: () => [
-        const UserLoading(),
-        const UserLoaded(
+        const UserLoadingState(),
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -79,7 +79,7 @@ void main() {
     );
 
     blocTest<UserBloc, UserState>(
-      'should emit [UserLoading, UserError] when FetchUsersEvent fails',
+      'should emit [UserLoadingState, UserErrorState] when FetchUsersEvent fails',
       build: () {
         when(() => mockGetUsersUseCase(any()))
             .thenAnswer((_) async => const Left(ServerFailure('Server Error')));
@@ -87,8 +87,8 @@ void main() {
       },
       act: (bloc) => bloc.add(const FetchUsersEvent()),
       expect: () => [
-        const UserLoading(),
-        const UserError('Server Error'),
+        const UserLoadingState(),
+        const UserErrorState('Server Error'),
       ],
     );
 
@@ -99,7 +99,7 @@ void main() {
             .thenAnswer((_) async => const Right(Tuple2([tUser2], 2)));
         return userBloc;
       },
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -108,7 +108,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const FetchNextPageEvent()),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -116,7 +116,7 @@ void main() {
           hasReachedMax: false,
           isFetchingMore: true,
         ),
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1, tUser2],
           filteredUsers: [tUser1, tUser2],
           currentPage: 2,
@@ -130,7 +130,7 @@ void main() {
     blocTest<UserBloc, UserState>(
       'should not fetch next page if hasReachedMax is true',
       build: () => userBloc,
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -148,7 +148,7 @@ void main() {
             .thenAnswer((_) async => const Left(ServerFailure('Next page fail')));
         return userBloc;
       },
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -157,7 +157,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const FetchNextPageEvent()),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -165,7 +165,7 @@ void main() {
           hasReachedMax: false,
           isFetchingMore: true,
         ),
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -184,7 +184,7 @@ void main() {
             .thenAnswer((_) async => const Right(Tuple2([tUser1, tUser2], 2)));
         return userBloc;
       },
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -193,7 +193,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const RefreshUsersEvent()),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -201,7 +201,7 @@ void main() {
           hasReachedMax: false,
           isRefreshing: true,
         ),
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1, tUser2],
           filteredUsers: [tUser1, tUser2],
           currentPage: 1,
@@ -213,13 +213,13 @@ void main() {
     );
 
     blocTest<UserBloc, UserState>(
-      'should set errorMessage when RefreshUsersEvent fails on UserLoaded',
+      'should set errorMessage when RefreshUsersEvent fails on UserLoadedState',
       build: () {
         when(() => mockGetUsersUseCase(const GetUsersParams(page: 1, perPage: 10)))
             .thenAnswer((_) async => const Left(ServerFailure('Refresh error')));
         return userBloc;
       },
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -228,7 +228,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const RefreshUsersEvent()),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -236,7 +236,7 @@ void main() {
           hasReachedMax: false,
           isRefreshing: true,
         ),
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -249,7 +249,7 @@ void main() {
     );
 
     blocTest<UserBloc, UserState>(
-      'should emit UserError when RefreshUsersEvent fails on non-UserLoaded state',
+      'should emit UserErrorState when RefreshUsersEvent fails on non-UserLoaded state',
       build: () {
         when(() => mockGetUsersUseCase(const GetUsersParams(page: 1, perPage: 10)))
             .thenAnswer((_) async => const Left(ServerFailure('Fatal Refresh error')));
@@ -257,14 +257,14 @@ void main() {
       },
       act: (bloc) => bloc.add(const RefreshUsersEvent()),
       expect: () => [
-        const UserError('Fatal Refresh error'),
+        const UserErrorState('Fatal Refresh error'),
       ],
     );
 
     blocTest<UserBloc, UserState>(
       'should filter users correctly by name and email (handling whitespace and special chars)',
       build: () => userBloc,
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1, tUser2],
         filteredUsers: [tUser1, tUser2],
         currentPage: 1,
@@ -273,7 +273,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const SearchUsersEvent('  george! ')),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1, tUser2],
           filteredUsers: [tUser1],
           currentPage: 1,
@@ -287,7 +287,7 @@ void main() {
     blocTest<UserBloc, UserState>(
       'should restore all users when search query is empty',
       build: () => userBloc,
-      seed: () => const UserLoaded(
+      seed: () => const UserLoadedState(
         users: [tUser1, tUser2],
         filteredUsers: [tUser1],
         currentPage: 1,
@@ -297,7 +297,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const SearchUsersEvent('')),
       expect: () => [
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser1, tUser2],
           filteredUsers: [tUser1, tUser2],
           currentPage: 1,

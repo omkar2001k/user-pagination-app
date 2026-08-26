@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'core/router/app_router.dart';
-import 'core/services/service_locator.dart';
-import 'core/theme/app_theme.dart';
+import 'package:user_pagination_app/core/router/app_router.dart';
+import 'package:user_pagination_app/core/services/service_locator.dart';
+import 'package:user_pagination_app/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive for local storage caching
   await Hive.initFlutter();
-
-  // Initialize GetIt dependency injection
   await initServiceLocator();
-
   runApp(const UserPaginationApp());
 }
 

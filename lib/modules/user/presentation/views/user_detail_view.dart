@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../core/widgets/common_avatar_widget.dart';
-import '../../domain/entities/user_entity.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
+import 'package:user_pagination_app/core/widgets/common_avatar_widget.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
 
 class UserDetailView extends StatelessWidget {
   final UserEntity user;
@@ -86,7 +87,7 @@ class UserDetailView extends StatelessWidget {
                     const Icon(Icons.person_rounded),
               ),
             ),
-            const SizedBox(width: 10),
+            AppSpacing.h10,
             const Text('User Details'),
           ],
         ),
@@ -105,8 +106,7 @@ class UserDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 12),
-                  // Centered Hero Avatar with Outer Glow
+                  AppSpacing.v12,
                   Center(
                     child: Stack(
                       alignment: Alignment.center,
@@ -128,9 +128,7 @@ class UserDetailView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Full Name & ID
+                  AppSpacing.v16,
                   Text(
                     user.fullName,
                     style: theme.textTheme.headlineMedium?.copyWith(
@@ -138,7 +136,7 @@ class UserDetailView extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 6),
+                  AppSpacing.v6,
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -155,9 +153,7 @@ class UserDetailView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
-
-                  // Quick Action Buttons using url_launcher
+                  AppSpacing.v28,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -187,9 +183,7 @@ class UserDetailView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
-
-                  // Detail Cards Section
+                  AppSpacing.v28,
                   Card(
                     elevation: 1,
                     shape: RoundedRectangleBorder(
@@ -205,14 +199,14 @@ class UserDetailView extends StatelessWidget {
                             title: 'First Name',
                             value: user.firstName,
                           ),
-                          const Divider(height: 24),
+                          const AppLine(height: 24),
                           _buildInfoTile(
                             context: context,
                             icon: Icons.person_outline_rounded,
                             title: 'Last Name',
                             value: user.lastName,
                           ),
-                          const Divider(height: 24),
+                          const AppLine(height: 24),
                           _buildInfoTile(
                             context: context,
                             icon: Icons.alternate_email_rounded,
@@ -220,7 +214,7 @@ class UserDetailView extends StatelessWidget {
                             value: user.email,
                           ),
                           if (user.phone != null) ...[
-                            const Divider(height: 24),
+                            const AppLine(height: 24),
                             _buildInfoTile(
                               context: context,
                               icon: Icons.phone_android_rounded,
@@ -262,7 +256,7 @@ class UserDetailView extends StatelessWidget {
         child: Column(
           children: [
             Icon(icon, color: theme.primaryColor, size: 24),
-            const SizedBox(height: 6),
+            AppSpacing.v6,
             Text(
               label,
               style: TextStyle(
@@ -294,7 +288,7 @@ class UserDetailView extends StatelessWidget {
           ),
           child: Icon(icon, color: theme.primaryColor, size: 20),
         ),
-        const SizedBox(width: 14),
+        AppSpacing.h14,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,7 +297,7 @@ class UserDetailView extends StatelessWidget {
                 title,
                 style: theme.textTheme.bodyMedium,
               ),
-              const SizedBox(height: 2),
+              AppSpacing.v2,
               Text(
                 value,
                 style: theme.textTheme.bodyLarge?.copyWith(

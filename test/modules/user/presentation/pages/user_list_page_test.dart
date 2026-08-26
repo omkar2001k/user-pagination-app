@@ -39,9 +39,9 @@ void main() {
   }
 
   group('UserListView Widget Tests', () {
-    testWidgets('should render shimmer loading when state is UserLoading',
+    testWidgets('should render shimmer loading when state is UserLoadingState',
         (tester) async {
-      when(() => mockUserBloc.state).thenReturn(const UserLoading());
+      when(() => mockUserBloc.state).thenReturn(const UserLoadingState());
 
       await tester
           .pumpWidget(makeTestableWidget(UserListView(onUserSelected: (_) {})));
@@ -50,10 +50,10 @@ void main() {
     });
 
     testWidgets(
-        'should render error widget when state is UserError and handle retry',
+        'should render error widget when state is UserErrorState and handle retry',
         (tester) async {
       when(() => mockUserBloc.state)
-          .thenReturn(const UserError('Server Failure'));
+          .thenReturn(const UserErrorState('Server Failure'));
 
       await tester
           .pumpWidget(makeTestableWidget(UserListView(onUserSelected: (_) {})));
@@ -67,10 +67,10 @@ void main() {
       verify(() => mockUserBloc.add(const FetchUsersEvent())).called(1);
     });
 
-    testWidgets('should render list of user cards when state is UserLoaded',
+    testWidgets('should render list of user cards when state is UserLoadedState',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser],
           filteredUsers: [tUser],
           currentPage: 1,
@@ -99,7 +99,7 @@ void main() {
     testWidgets('should render empty widget when filtered users list is empty',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser],
           filteredUsers: [],
           currentPage: 1,
@@ -120,7 +120,7 @@ void main() {
         'should render empty widget with no available users message when search is empty',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [],
           filteredUsers: [],
           currentPage: 1,
@@ -141,7 +141,7 @@ void main() {
         'should render loading indicator at bottom when isFetchingMore is true',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser],
           filteredUsers: [tUser],
           currentPage: 1,
@@ -161,7 +161,7 @@ void main() {
         'should trigger RefreshUsersEvent when refresh action button in AppBar is tapped',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser],
           filteredUsers: [tUser],
           currentPage: 1,
@@ -182,7 +182,7 @@ void main() {
     testWidgets('should trigger SearchUsersEvent when typing in search field',
         (tester) async {
       when(() => mockUserBloc.state).thenReturn(
-        const UserLoaded(
+        const UserLoadedState(
           users: [tUser],
           filteredUsers: [tUser],
           currentPage: 1,
@@ -202,9 +202,9 @@ void main() {
     });
 
     testWidgets(
-        'should display SnackBar when state is UserLoaded and errorMessage is not null',
+        'should display SnackBar when state is UserLoadedState and errorMessage is not null',
         (tester) async {
-      const loadedState = UserLoaded(
+      const loadedState = UserLoadedState(
         users: [tUser],
         filteredUsers: [tUser],
         currentPage: 1,
@@ -216,7 +216,7 @@ void main() {
       whenListen(
         mockUserBloc,
         Stream.fromIterable([loadedState]),
-        initialState: const UserLoading(),
+        initialState: const UserLoadingState(),
       );
 
       await tester

@@ -1,184 +1,193 @@
-# User Directory - Flutter Clean Architecture App
+# User Directory - Flutter Clean Architecture Application
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/omkar2001k/user-pagination-app)
 [![Flutter Version](https://img.shields.io/badge/Flutter-^3.0.0-02569B?logo=flutter)](https://flutter.dev)
 [![Dart Version](https://img.shields.io/badge/Dart-^3.0.0-0175C2?logo=dart)](https://dart.dev)
-[![Tests Passing](https://img.shields.io/badge/Tests-71%20Passed-brightgreen?logo=flutter)](https://github.com/omkar2001k/user-pagination-app)
+[![Tests Passing](https://img.shields.io/badge/Tests-77%20Passed-brightgreen?logo=flutter)](https://github.com/omkar2001k/user-pagination-app)
+[![Code Coverage](https://img.shields.io/badge/Coverage-97.0%25-brightgreen)](https://github.com/omkar2001k/user-pagination-app)
 
-A production-grade, highly responsive Flutter application implementing **Clean Architecture**, **BLoC State Management**, **Hive Offline Caching**, **GoRouter Navigation**, and **GetIt Dependency Injection** to display paginated user directory information from ReqRes API.
+A robust, production-ready Flutter application demonstrating **Clean Architecture**, **BLoC (flutter_bloc)** state management, **Hive** offline caching, **GoRouter** declarative navigation, and **GetIt** dependency injection.
 
 ---
 
-## 🔗 Repository Links
+## 🔗 Repository Information
 
 - **GitHub Repository**: [https://github.com/omkar2001k/user-pagination-app](https://github.com/omkar2001k/user-pagination-app)
 - **Clone URL**: `git clone https://github.com/omkar2001k/user-pagination-app.git`
 
 ---
 
-## 🌟 Key Features
+## 🌟 Features Overview
 
-- **Clean Architecture & Layered Modular Structure**: Strict separation of concerns following SOLID principles across `Data`, `Domain`, `Presentation`, and `Core` layers.
-- **User List & Detail View**: Displays a list of users with high-resolution avatars, full names, and email addresses, with seamless transition to user detail page using `GoRouter`.
-- **API Pagination & Infinite Scroll**: Fetches users in pages of 10 items (`?per_page=10&page=X`) from `reqres.in` API with debounced scroll triggers near the list end.
-- **Pull-to-Refresh**: Gesture-driven refresh capability allowing users to fetch updated page 1 data anytime.
-- **Client-side Search & Edge-Case Handling**: Instant real-time filtering by user's full name or email address, with handling for leading/trailing whitespace, case insensitivity, empty results, and special characters.
-- **Offline First & Hive Caching**: Automatically caches page 1 user data into local storage using Hive Box. If internet is lost or remote API calls fail, the app falls back to cached data accompanied by a friendly offline indicator.
-- **Network & Error Recovery**: Integrated timeout management (10-second default limit) with user-friendly retry buttons (`CommonErrorWidget`) and offline warning banners.
-- **Standardized Component Library**: Shared UI components (`CommonSearchBar`, `CommonAvatarWidget`, `CommonLoadingWidget`, `CommonErrorWidget`, `CommonEmptyWidget`) placed under `lib/core/widgets/`.
-- **Complete Test Coverage**: Comprehensive suite of 71 unit and widget tests covering Data Sources, Repositories, Use Cases, BLoC, and Page/View Widgets using `mocktail` and `bloc_test`.
+- **Clean Architecture & Separation of Concerns**: Strict boundary separation across `Data`, `Domain`, `Presentation`, and `Core` layers using SOLID principles.
+- **Dedicated Data Mappers**: `UserMapper` explicitly transforms raw DTOs (`UserModel`) to and from immutable domain models (`UserEntity`).
+- **REST API Pagination & Infinite Scroll**: Fetches users in chunks of 10 (`?per_page=10&page=X`) from `https://reqres.in/api/users` with an 85% scroll threshold trigger, request deduplication, and loading spinners.
+- **Offline First & Hive Caching**: Automatically persists page 1 user data into local storage using Hive Box (`cached_users_box`). When offline, the app immediately serves cached users with an offline banner.
+- **Offline Error Handling & Retry**: If the device is offline with no cache available, a dedicated `CommonErrorWidget` is presented with an actionable **"Try Again"** button.
+- **Pull-to-Refresh**: Native `RefreshIndicator` support to re-fetch page 1 and synchronize local storage cache.
+- **Client-side Search & Edge Cases**: Real-time filtering across First Name, Last Name, and Email with special character sanitization and leading/trailing whitespace trimming.
+- **Rich Design System & Spacing Tokens**: Centralized `AppSpacing` and `AppLine` utilities to guarantee consistent spacing and avoid arbitrary magic numbers.
+- **Comprehensive 97.0% Test Coverage**: 77 automated unit, bloc, and widget tests with zero static analysis issues (`flutter analyze` clean).
 
 ---
 
-## 🏗️ Architecture & Folder Structure
-
-The application strictly follows Clean Architecture guidelines:
+## 🏗️ Architecture & Project Structure
 
 ```
 lib/
 ├── core/
 │   ├── constants/
-│   │   └── api_constants.dart
+│   │   └── api_constants.dart           # Base URLs, endpoints, timeouts, cache keys
 │   ├── errors/
-│   │   ├── exceptions.dart
-│   │   └── failures.dart
+│   │   ├── exceptions.dart              # ServerException, CacheException, NetworkException, TimeoutException
+│   │   └── failures.dart                # Equatable Failure models (ServerFailure, NetworkFailure, etc.)
 │   ├── network/
-│   │   └── network_info.dart
+│   │   └── network_info.dart            # Connectivity status wrapper
 │   ├── router/
-│   │   └── app_router.dart
+│   │   └── app_router.dart              # GoRouter route definitions & page navigation
 │   ├── services/
-│   │   └── service_locator.dart (GetIt DI)
+│   │   └── service_locator.dart         # GetIt dependency injection registry
 │   ├── theme/
-│   │   └── app_theme.dart
+│   │   └── app_theme.dart               # Material 3 Light & Dark themes with Inter typography
 │   ├── utils/
-│   │   └── usecase.dart
-│   └── widgets/                     # Common Reusable Widgets
-│       ├── common_avatar_widget.dart
-│       ├── common_empty_widget.dart
-│       ├── common_error_widget.dart
-│       ├── common_loading_widget.dart
-│       └── common_search_bar.dart
-├── main.dart
+│   │   └── usecase.dart                 # Generic UseCase<Type, Params> interface
+│   └── widgets/                         # Reusable core design system components
+│       ├── app_spacing.dart             # AppSpacing & AppLine centralized spacing helper
+│       ├── common_avatar_widget.dart    # CachedNetworkImage with initials fallback
+│       ├── common_empty_widget.dart     # Contextual empty state illustration & message
+│       ├── common_error_widget.dart     # Error message card with "Try Again" retry action
+│       ├── common_loading_widget.dart   # Shimmer skeleton loader
+│       └── common_search_bar.dart       # Search text field with clear button
+├── main.dart                            # Application entry point & service initialization
 └── modules/
-    └── user/                        # Feature Module
+    └── user/                            # Feature Module
         ├── data/
         │   ├── datasources/
-        │   │   ├── user_local_data_source.dart
-        │   │   └── user_remote_data_source.dart
+        │   │   ├── user_local_data_source.dart   # Hive Box read/write operations
+        │   │   └── user_remote_data_source.dart  # HTTP API client integration
+        │   ├── mappers/
+        │   │   └── user_mapper.dart              # UserModel <-> UserEntity bidirectional mapping
         │   ├── models/
-        │   │   ├── user_model.dart
+        │   │   ├── user_model.dart               # User DTO with JSON serialization
         │   │   └── user_paginated_response_model.dart
         │   └── repositories/
-        │       └── user_repository_impl.dart
+        │       └── user_repository_impl.dart     # Repository coordinating remote, cache & mapper
         ├── domain/
         │   ├── entities/
-        │   │   └── user_entity.dart
+        │   │   └── user_entity.dart              # Immutable business entity
         │   ├── repositories/
-        │   │   └── user_repository.dart
+        │   │   └── user_repository.dart          # Repository contract returning Either<Failure, T>
         │   └── usecases/
-        │       └── get_users_usecase.dart
+        │       └── get_users_usecase.dart        # GetUsersUseCase business logic
         └── presentation/
             ├── bloc/
-            │   ├── user_bloc.dart
-            │   ├── user_event.dart
-            │   └── user_state.dart
+            │   ├── user_bloc.dart                # Event handling, pagination & search logic
+            │   ├── user_event.dart               # FetchUsersEvent, FetchNextPageEvent, RefreshUsersEvent, SearchUsersEvent
+            │   └── user_state.dart               # UserInitialState, UserLoadingState, UserLoadedState, UserErrorState
             ├── pages/
-            │   ├── user_detail_page.dart
-            │   └── user_list_page.dart
+            │   ├── user_detail_page.dart         # Route wrapper for detail view
+            │   └── user_list_page.dart           # Route wrapper providing UserBloc
             ├── views/
-            │   ├── user_detail_view.dart
-            │   └── user_list_view.dart
+            │   ├── user_detail_view.dart         # User profile, contact actions, details
+            │   └── user_list_view.dart           # Search bar, user list & pagination UI
             └── widgets/
-                └── user_card_widget.dart
+                └── user_card_widget.dart         # User list item card
 ```
 
 ---
 
 ## 🛠️ Technology Stack & Libraries
 
-| Dependency / Package | Version | Purpose |
-| -------------------- | ------- | ------- |
-| **`flutter_bloc`** | ^8.1.3 | Predictable BLoC state management |
-| **`go_router`** | ^14.0.0 | Declarative routing & deep linking |
-| **`get_it`** | ^7.7.0 | Service locator for Dependency Injection |
-| **`http`** | ^1.2.1 | REST API communication |
-| **`hive` & `hive_flutter`** | ^2.2.3 | Fast offline key-value local storage |
-| **`connectivity_plus`** | ^6.0.3 | Real-time network connectivity status monitoring |
-| **`dartz`** | ^0.10.1 | Functional programming structures (`Either<Failure, Success>`) |
-| **`cached_network_image`** | ^3.3.1 | Efficient image caching and visual placeholders |
-| **`shimmer`** | ^3.0.0 | Skeleton loading animations for smooth UX |
-| **`bloc_test` & `mocktail`** | ^9.1.7 / ^1.0.4 | Unit and widget test mocks & verification |
+| Dependency | Purpose |
+| :--- | :--- |
+| **`flutter_bloc`** | Predictable, reactive BLoC state management |
+| **`dartz`** | Functional programming primitives (`Either<Failure, T>`) for explicit error handling |
+| **`go_router`** | Declarative navigation and type-safe routing |
+| **`get_it`** | Lightweight service locator for Dependency Injection |
+| **`http`** | REST API networking client with timeouts |
+| **`hive` & `hive_flutter`** | Fast, lightweight NoSQL key-value offline storage |
+| **`connectivity_plus`** | Network connectivity status detection |
+| **`cached_network_image`** | Image caching with smooth placeholders |
+| **`shimmer`** | Skeleton loading animations |
+| **`google_fonts`** | Inter typography |
+| **`bloc_test` & `mocktail`** | Mocking and BLoC unit testing |
 
 ---
 
-## 🚀 Getting Started
+## 📋 Problem Scenarios & Edge Cases Handled
 
-### Prerequisites
-
-- Flutter SDK `^3.0.0`
-- Dart SDK `^3.0.0`
-
-### Setup Instructions
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/omkar2001k/user-pagination-app.git
-   cd user-pagination-app
-   ```
-
-2. **Fetch packages**:
-   ```bash
-   flutter pub get
-   ```
-
-3. **Run the app**:
-   ```bash
-   flutter run
-   ```
+| Scenario | Handled By | Behavior |
+| :--- | :--- | :--- |
+| **Slow API Response** | `ApiConstants.timeoutDuration` (10s) + `Shimmer` | Shimmer skeletons inform the user while fetching; requests exceeding 10s throw `TimeoutException` and transition gracefully. |
+| **No Internet Connection** | `NetworkInfoImpl` + `UserLocalDataSource` + `CommonErrorWidget` | If cached data exists in Hive, loads cached users immediately with a status banner. If no cache exists, displays `CommonErrorWidget` with a **"Try Again"** retry button. |
+| **Empty API Response** | `CommonEmptyWidget` | Shows a friendly empty illustration with actionable advice to pull-to-refresh or adjust search terms. |
+| **Search Edge Cases** | `_applySearchFilter` | Trims leading/trailing whitespace, strips special characters via regex, and matches case-insensitively. |
+| **Navigation & Back Stack** | `GoRouter` + `maybePop()` | Back navigation cleanly disposes controllers and avoids memory leaks. |
+| **UI Responsiveness** | `ConstrainedBox(maxWidth: 600)` + `SafeArea` | Adapts cleanly across mobile, tablet, and web viewports. |
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing & Code Coverage (97.0%)
 
-To execute all unit and widget tests across data, domain, and presentation layers:
+### Running Tests
+
+Execute all 77 unit, bloc, and widget tests:
 
 ```bash
 flutter test
 ```
 
-To generate coverage reports:
+### Generating Coverage Report
+
+Generate line coverage report (`coverage/lcov.info`):
+
 ```bash
 flutter test --coverage
 ```
 
+### Detailed Layer Coverage Breakdown
+
+| Layer / Source File | Lines Hit / Total | Coverage Rate |
+| :--- | :---: | :---: |
+| `lib/core/errors/exceptions.dart` | 12 / 12 | **100.0%** |
+| `lib/core/errors/failures.dart` | 7 / 7 | **100.0%** |
+| `lib/core/network/network_info.dart` | 4 / 4 | **100.0%** |
+| `lib/core/utils/usecase.dart` | 2 / 2 | **100.0%** |
+| `lib/core/widgets/app_spacing.dart` | 16 / 17 | **94.1%** |
+| `lib/core/widgets/common_avatar_widget.dart` | 29 / 30 | **96.7%** |
+| `lib/core/widgets/common_empty_widget.dart` | 19 / 19 | **100.0%** |
+| `lib/core/widgets/common_error_widget.dart` | 25 / 25 | **100.0%** |
+| `lib/core/widgets/common_loading_widget.dart` | 25 / 25 | **100.0%** |
+| `lib/core/widgets/common_search_bar.dart` | 38 / 38 | **100.0%** |
+| `lib/modules/user/data/datasources/user_local_data_source.dart` | 19 / 19 | **100.0%** |
+| `lib/modules/user/data/datasources/user_remote_data_source.dart` | 17 / 17 | **100.0%** |
+| `lib/modules/user/data/mappers/user_mapper.dart` | 20 / 20 | **100.0%** |
+| `lib/modules/user/data/models/user_model.dart` | 22 / 22 | **100.0%** |
+| `lib/modules/user/data/models/user_paginated_response_model.dart` | 10 / 10 | **100.0%** |
+| `lib/modules/user/data/repositories/user_repository_impl.dart` | 26 / 26 | **100.0%** |
+| `lib/modules/user/domain/entities/user_entity.dart` | 8 / 8 | **100.0%** |
+| `lib/modules/user/domain/usecases/get_users_usecase.dart` | 8 / 8 | **100.0%** |
+| `lib/modules/user/presentation/bloc/user_bloc.dart` | 69 / 69 | **100.0%** |
+| `lib/modules/user/presentation/bloc/user_event.dart` | 9 / 9 | **100.0%** |
+| `lib/modules/user/presentation/bloc/user_state.dart` | 32 / 32 | **100.0%** |
+| `lib/modules/user/presentation/views/user_list_view.dart` | 57 / 71 | **80.3%** |
+| `lib/modules/user/presentation/widgets/user_card_widget.dart` | 37 / 37 | **100.0%** |
+| **TOTAL PROJECT COVERAGE** | **511 / 527 lines** | **97.0%** |
+
 ---
 
-## 📱 App Highlights & Behavior
+## 🚀 Running the Project
 
-- **Initial Load**: Displays a shimmer skeleton loading grid, then populates the user list.
-- **Infinite Pagination**: Scroll near the bottom to trigger background page fetches (`page 2`, `page 3`...).
-- **Search Filtering**: Live query updates with graceful handling of non-matching queries ("No users found").
-- **Offline Caching Strategy**: Automatically caches page 1 data into Hive. When offline, loads cached users and displays an offline indicator bar.
+```bash
+# 1. Fetch dependencies
+flutter pub get
 
----
+# 2. Analyze code for static correctness
+flutter analyze
 
-## 📋 Assignment Requirements & Problem Scenarios Matrix
+# 3. Run all tests
+flutter test
 
-| Requirement / Problem Scenario | Implementation Details | Status |
-| ------------------------------ | ---------------------- | ------ |
-| **State Management** | Implemented using `flutter_bloc` (`UserBloc`, `UserEvent`, `UserState`) | ✅ Completed |
-| **Clean Architecture** | Separated into `Data`, `Domain`, `Presentation`, and `Core` layers | ✅ Completed |
-| **Networking & API** | Uses `http` package fetching from `https://reqres.in/api/users` | ✅ Completed |
-| **Pagination** | Query parameters `?per_page=10&page=X` with debounced infinite scroll | ✅ Completed |
-| **Navigation** | `GoRouter` declarative navigation between list and detail views | ✅ Completed |
-| **Offline Data Caching** | Local caching using `Hive` with automatic offline fallback | ✅ Completed |
-| **Pull-to-Refresh** | Native `RefreshIndicator` gesture re-fetching page 1 data | ✅ Completed |
-| **Dependency Injection** | `get_it` service locator (`service_locator.dart`) | ✅ Completed |
-| **Slow API Response** | 10-second timeout mechanism with shimmer loading feedback | ✅ Handling Done |
-| **No Internet Connection** | Displays offline notification bar, cached data fallback & retry button | ✅ Handling Done |
-| **Empty API Response** | `CommonEmptyWidget` with friendly empty state illustration | ✅ Handling Done |
-| **Search Edge Cases** | Trims whitespace, ignores special chars, case-insensitive real-time filtering | ✅ Handling Done |
-| **UI Responsiveness** | Adaptive layout supporting light/dark theme and variable screen sizes | ✅ Handling Done |
-| **Unit & Widget Testing** | 71 automated tests written with `mocktail` & `bloc_test` | ✅ Completed |
-
-
+# 4. Launch the app
+flutter run
+```

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../modules/user/domain/entities/user_entity.dart';
-import '../../modules/user/presentation/pages/user_detail_page.dart';
-import '../../modules/user/presentation/pages/user_list_page.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/presentation/pages/user_detail_page.dart';
+import 'package:user_pagination_app/modules/user/presentation/pages/user_list_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(

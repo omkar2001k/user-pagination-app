@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/widgets/common_empty_widget.dart';
-import '../../../../core/widgets/common_error_widget.dart';
-import '../../../../core/widgets/common_loading_widget.dart';
-import '../../../../core/widgets/common_search_bar.dart';
-import '../../domain/entities/user_entity.dart';
-import '../bloc/user_bloc.dart';
-import '../bloc/user_event.dart';
-import '../bloc/user_state.dart';
-import '../widgets/user_card_widget.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
+import 'package:user_pagination_app/core/widgets/common_empty_widget.dart';
+import 'package:user_pagination_app/core/widgets/common_error_widget.dart';
+import 'package:user_pagination_app/core/widgets/common_loading_widget.dart';
+import 'package:user_pagination_app/core/widgets/common_search_bar.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/presentation/bloc/user_bloc.dart';
+import 'package:user_pagination_app/modules/user/presentation/bloc/user_event.dart';
+import 'package:user_pagination_app/modules/user/presentation/bloc/user_state.dart';
+import 'package:user_pagination_app/modules/user/presentation/widgets/user_card_widget.dart';
 
 class UserListView extends StatelessWidget {
   final ValueChanged<UserEntity> onUserSelected;
@@ -22,7 +23,7 @@ class UserListView extends StatelessWidget {
     final bloc = context.read<UserBloc>();
     final refreshCompleted = bloc.stream.firstWhere(
       (state) =>
-          (state is UserLoaded && !state.isRefreshing) || state is UserError,
+          (state is UserLoadedState && !state.isRefreshing) || state is UserErrorState,
     );
     bloc.add(const RefreshUsersEvent());
     await refreshCompleted;
@@ -47,7 +48,7 @@ class UserListView extends StatelessWidget {
                     const Icon(Icons.people_alt_rounded),
               ),
             ),
-            const SizedBox(width: 10),
+            AppSpacing.h10,
             const Text('User Directory'),
           ],
         ),
@@ -64,7 +65,6 @@ class UserListView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Search Input Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: CommonSearchBar(
@@ -74,12 +74,10 @@ class UserListView extends StatelessWidget {
                 },
               ),
             ),
-
-            // Main Body Content
             Expanded(
               child: BlocConsumer<UserBloc, UserState>(
                 listener: (context, state) {
-                  if (state is UserLoaded && state.errorMessage != null) {
+                  if (state is UserLoadedState && state.errorMessage != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(state.errorMessage!),
@@ -90,11 +88,11 @@ class UserListView extends StatelessWidget {
                   }
                 },
                 builder: (context, state) {
-                  if (state is UserLoading || state is UserInitial) {
+                  if (state is UserLoadingState || state is UserInitialState) {
                     return const CommonLoadingWidget();
                   }
 
-                  if (state is UserError) {
+                  if (state is UserErrorState) {
                     return CommonErrorWidget(
                       message: state.message,
                       onRetry: () {
@@ -103,7 +101,7 @@ class UserListView extends StatelessWidget {
                     );
                   }
 
-                  if (state is UserLoaded) {
+                  if (state is UserLoadedState) {
                     final users = state.filteredUsers;
 
                     if (users.isEmpty) {
@@ -171,7 +169,7 @@ class UserListView extends StatelessWidget {
                     );
                   }
 
-                  return const SizedBox.shrink();
+                  return AppSpacing.shrink;
                 },
               ),
             ),

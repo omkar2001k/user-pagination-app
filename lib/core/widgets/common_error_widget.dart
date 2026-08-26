@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user_pagination_app/core/widgets/app_spacing.dart';
 
 class CommonErrorWidget extends StatelessWidget {
   final String message;
@@ -35,7 +36,7 @@ class CommonErrorWidget extends StatelessWidget {
                 color: theme.colorScheme.error,
               ),
             ),
-            const SizedBox(height: 20),
+            AppSpacing.v20,
             Text(
               'Something went wrong',
               style: theme.textTheme.titleLarge?.copyWith(
@@ -43,14 +44,14 @@ class CommonErrorWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            AppSpacing.v8,
             Text(
               message,
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              AppSpacing.v24,
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),

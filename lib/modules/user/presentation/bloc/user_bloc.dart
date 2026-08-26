@@ -1,14 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/api_constants.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../domain/usecases/get_users_usecase.dart';
-import 'user_event.dart';
-import 'user_state.dart';
+import 'package:user_pagination_app/core/constants/api_constants.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/domain/usecases/get_users_usecase.dart';
+import 'package:user_pagination_app/modules/user/presentation/bloc/user_event.dart';
+import 'package:user_pagination_app/modules/user/presentation/bloc/user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final GetUsersUseCase getUsersUseCase;
 
-  UserBloc({required this.getUsersUseCase}) : super(const UserInitial()) {
+  UserBloc({required this.getUsersUseCase}) : super(const UserInitialState()) {
     on<FetchUsersEvent>(_onFetchUsers);
     on<FetchNextPageEvent>(_onFetchNextPage);
     on<RefreshUsersEvent>(_onRefreshUsers);
@@ -19,27 +19,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     FetchUsersEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(const UserLoading());
+    emit(const UserLoadingState());
 
     final result = await getUsersUseCase(
       const GetUsersParams(page: 1, perPage: ApiConstants.defaultPerPage),
     );
 
     result.fold(
-      (failure) {
-        emit(UserError(failure.message));
-      },
+      (failure) => emit(UserErrorState(failure.message)),
       (data) {
         final users = data.value1;
         final totalPages = data.value2;
-        final hasReachedMax = 1 >= totalPages;
 
-        emit(UserLoaded(
+        emit(UserLoadedState(
           users: users,
           filteredUsers: users,
           currentPage: 1,
           totalPages: totalPages,
-          hasReachedMax: hasReachedMax,
+          hasReachedMax: 1 >= totalPages,
         ));
       },
     );
@@ -50,7 +47,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     final currentState = state;
-    if (currentState is! UserLoaded || currentState.hasReachedMax || currentState.isFetchingMore) {
+    if (currentState is! UserLoadedState ||
+        currentState.hasReachedMax ||
+        currentState.isFetchingMore) {
       return;
     }
 
@@ -63,7 +62,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     result.fold(
       (failure) {
-        // If next page fetch fails, keep current loaded users but turn off fetching indicator and show message
         emit(currentState.copyWith(
           isFetchingMore: false,
           errorMessage: failure.message,
@@ -72,21 +70,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       (data) {
         final newUsers = data.value1;
         final totalPages = data.value2;
-        
-        // Append new users avoiding duplicate IDs if any
-        final existingIds = currentState.users.map((u) => u.id).toSet();
-        final filteredNewUsers = newUsers.where((u) => !existingIds.contains(u.id)).toList();
-        final updatedUsers = List<UserEntity>.from(currentState.users)..addAll(filteredNewUsers);
 
-        final updatedFiltered = _applySearchFilter(updatedUsers, currentState.searchQuery);
-        final hasReachedMax = nextPage >= totalPages;
+        final existingIds = currentState.users.map((u) => u.id).toSet();
+        final dedupedNewUsers =
+            newUsers.where((u) => !existingIds.contains(u.id)).toList();
+        final updatedUsers = List<UserEntity>.from(currentState.users)
+          ..addAll(dedupedNewUsers);
+
+        final updatedFiltered =
+            _applySearchFilter(updatedUsers, currentState.searchQuery);
 
         emit(currentState.copyWith(
           users: updatedUsers,
           filteredUsers: updatedFiltered,
           currentPage: nextPage,
           totalPages: totalPages,
-          hasReachedMax: hasReachedMax,
+          hasReachedMax: nextPage >= totalPages,
           isFetchingMore: false,
         ));
       },
@@ -98,7 +97,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     final currentState = state;
-    if (currentState is UserLoaded) {
+    if (currentState is UserLoadedState) {
       emit(currentState.copyWith(isRefreshing: true));
     }
 
@@ -108,28 +107,28 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     result.fold(
       (failure) {
-        if (currentState is UserLoaded) {
+        if (currentState is UserLoadedState) {
           emit(currentState.copyWith(
             isRefreshing: false,
             errorMessage: failure.message,
           ));
         } else {
-          emit(UserError(failure.message));
+          emit(UserErrorState(failure.message));
         }
       },
       (data) {
         final users = data.value1;
         final totalPages = data.value2;
-        final hasReachedMax = 1 >= totalPages;
-        final searchQuery = currentState is UserLoaded ? currentState.searchQuery : '';
+        final searchQuery =
+            currentState is UserLoadedState ? currentState.searchQuery : '';
         final filtered = _applySearchFilter(users, searchQuery);
 
-        emit(UserLoaded(
+        emit(UserLoadedState(
           users: users,
           filteredUsers: filtered,
           currentPage: 1,
           totalPages: totalPages,
-          hasReachedMax: hasReachedMax,
+          hasReachedMax: 1 >= totalPages,
           isRefreshing: false,
           searchQuery: searchQuery,
         ));
@@ -142,7 +141,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) {
     final currentState = state;
-    if (currentState is UserLoaded) {
+    if (currentState is UserLoadedState) {
       final query = event.query;
       final filtered = _applySearchFilter(currentState.users, query);
       emit(currentState.copyWith(
@@ -153,7 +152,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   List<UserEntity> _applySearchFilter(List<UserEntity> users, String query) {
-    final sanitizedQuery = query.replaceAll(RegExp(r'[^\w\s]'), '').trim().toLowerCase();
+    final sanitizedQuery =
+        query.replaceAll(RegExp(r'[^\w\s]'), '').trim().toLowerCase();
     if (sanitizedQuery.isEmpty) {
       return users;
     }

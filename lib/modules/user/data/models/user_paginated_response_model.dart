@@ -1,4 +1,4 @@
-import 'user_model.dart';
+import 'package:user_pagination_app/modules/user/data/models/user_model.dart';
 
 class UserPaginatedResponseModel {
   final int page;

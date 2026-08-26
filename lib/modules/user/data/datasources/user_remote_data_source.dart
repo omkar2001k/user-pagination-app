@@ -2,9 +2,9 @@ import 'dart:async' as async;
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import '../../../../core/constants/api_constants.dart';
-import '../../../../core/errors/exceptions.dart';
-import '../models/user_paginated_response_model.dart';
+import 'package:user_pagination_app/core/constants/api_constants.dart';
+import 'package:user_pagination_app/core/errors/exceptions.dart';
+import 'package:user_pagination_app/modules/user/data/models/user_paginated_response_model.dart';
 
 abstract class UserRemoteDataSource {
   Future<UserPaginatedResponseModel> getUsers({

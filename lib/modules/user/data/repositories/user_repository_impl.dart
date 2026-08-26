@@ -1,11 +1,12 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/exceptions.dart';
-import '../../../../core/errors/failures.dart';
-import '../../../../core/network/network_info.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../datasources/user_local_data_source.dart';
-import '../datasources/user_remote_data_source.dart';
+import 'package:user_pagination_app/core/errors/exceptions.dart';
+import 'package:user_pagination_app/core/errors/failures.dart';
+import 'package:user_pagination_app/core/network/network_info.dart';
+import 'package:user_pagination_app/modules/user/data/datasources/user_local_data_source.dart';
+import 'package:user_pagination_app/modules/user/data/datasources/user_remote_data_source.dart';
+import 'package:user_pagination_app/modules/user/data/mappers/user_mapper.dart';
+import 'package:user_pagination_app/modules/user/domain/entities/user_entity.dart';
+import 'package:user_pagination_app/modules/user/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource remoteDataSource;
@@ -28,15 +29,12 @@ class UserRepositoryImpl implements UserRepository {
     if (isConnected) {
       try {
         final response = await remoteDataSource.getUsers(page: page, perPage: perPage);
-        final userEntities = response.users.map((model) => model.toEntity()).toList();
+        final userEntities = UserMapper.toEntityList(response.users);
 
-        // Cache page 1 results locally for offline availability
         if (page == 1) {
           try {
             await localDataSource.cacheUsers(response.users);
-          } catch (_) {
-            // Ignore cache save failures silently to not break online flow
-          }
+          } catch (_) {}
         }
 
         return Right(Tuple2(userEntities, response.totalPages));
@@ -58,7 +56,7 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, List<UserEntity>>> getCachedUsers() async {
     try {
       final cachedModels = await localDataSource.getCachedUsers();
-      final cachedEntities = cachedModels.map((m) => m.toEntity()).toList();
+      final cachedEntities = UserMapper.toEntityList(cachedModels);
       return Right(cachedEntities);
     } catch (e) {
       return const Left(CacheFailure('Failed to load cached users.'));
@@ -69,7 +67,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final cachedModels = await localDataSource.getCachedUsers();
       if (cachedModels.isNotEmpty) {
-        final cachedEntities = cachedModels.map((m) => m.toEntity()).toList();
+        final cachedEntities = UserMapper.toEntityList(cachedModels);
         return Right(Tuple2(cachedEntities, 1));
       }
     } catch (_) {}

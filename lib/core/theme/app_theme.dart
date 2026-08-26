@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF6366F1); // Modern Indigo
+  static const Color primaryColor = Color(0xFF6366F1);
   static const Color primaryVariant = Color(0xFF4F46E5);
-  static const Color accentColor = Color(0xFF10B981); // Emerald Green
+  static const Color accentColor = Color(0xFF10B981);
   
   static const Color lightBg = Color(0xFFF8FAFC);
   static const Color lightSurface = Color(0xFFFFFFFF);
